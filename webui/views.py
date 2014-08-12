@@ -124,7 +124,7 @@ def fetchallgenomeprojects(request, version):
     return HttpResponse(data, content_type="application/json")
     
 
-def getfiles(request, gpid, version):
+def fetchreps(request, gpid, version):
     context = {}
     
     try:
