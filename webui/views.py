@@ -27,6 +27,7 @@ def fetchraw(request, gpid, version):
         # We require a filetype
         return HttpResponse(status=400)
 
+    reptype = None
     if request.GET.get('reptype'):
         reptype = request.GET.get('reptype')
         if not reptype in REP_TYPES:
@@ -50,7 +51,7 @@ def fetchraw(request, gpid, version):
             del context['replicons']
             break
         
-        if not reptype == r.rep_type:
+        if reptype and (not reptype == r.rep_type):
             continue
         
         filename = os.path.join(genome_dir, r.file_name + '.' + filetype)
