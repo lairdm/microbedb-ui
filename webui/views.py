@@ -84,7 +84,7 @@ def fetchgenomeproject(request, gpid, version):
 
     data = json.dumps(context, indent=4, sort_keys=True)
     
-    return HttpResponse(data, mimetype="application/json")
+    return HttpResponse(data, content_type="application/json")
 
 def fetchgenomeprojects(request, gpid):
     context = {}
@@ -141,7 +141,7 @@ def getfiles(request, gpid, version):
 
     data = json.dumps(context)
     
-    return HttpResponse(data, mimetype="application/json")
+    return HttpResponse(data, content_type="application/json")
 
     
 
@@ -155,7 +155,7 @@ def versions(request):
     
     data = json.dumps(context)
     
-    return HttpResponse(data, mimetype="application/json")
+    return HttpResponse(data, content_type="application/json")
     
 def versionsnewest(request):
     
@@ -170,3 +170,40 @@ def versionsnewest(request):
     
     return HttpResponse(data, mimetype="application/json")
     
+def versiondiff(request, ver1, ver2):
+    context = {}
+    
+    try:
+        gp1 = {gp.gp_id: gp for gp in Genomeproject.objects.filter(version_id=ver1)}
+        gp2 = {gp.gp_id: gp for gp in Genomeproject.objects.filter(version_id=ver2)}
+    except Exception as e:
+        return HttpResponse(status=400)
+
+    intersection = gp1.viewkeys() & gp2.viewkeys()
+    newgps = gp2.viewkeys() - gp1.viewkeys()
+    removedgps = gp1.viewkeys() - gp2.viewkeys()
+    
+    context['newgenomes'] = [gp2[gp].to_struct() for gp in newgps]
+    context['removedgenomes'] = [gp1[gp].to_struct() for gp in removedgps]
+
+    context['changedgenomes'] = []
+    
+    for gp in intersection:
+        rep_set1 = {rep.rep_accnum.split('.')[0]: rep for rep in gp1[gp].replicon_set.all()}
+        rep_set2 = {rep.rep_accnum.split('.')[0]: rep for rep in gp2[gp].replicon_set.all()}
+
+        for rep in rep_set1:
+            if not rep_set1[rep].rep_accnum == rep_set2[rep].rep_accnum:
+                # They're different!
+                context['changedgenomes'].append(gp2[gp].to_struct())
+                break
+
+    
+    #context['changedgenomes'] = [gp2[gp].to_struct() for gp in intersection if not gp1[gp].rep_accnum == gp2[gp].rep_accnum]
+   
+    context['status'] = "OK"
+    
+    data = json.dumps(context, indent=4, sort_keys=True)
+    
+    return HttpResponse(data, content_type="application/json")
+
