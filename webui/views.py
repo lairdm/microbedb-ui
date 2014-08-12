@@ -192,7 +192,12 @@ def versiondiff(request, ver1, ver2):
         rep_set1 = {rep.rep_accnum.split('.')[0]: rep for rep in gp1[gp].replicon_set.all()}
         rep_set2 = {rep.rep_accnum.split('.')[0]: rep for rep in gp2[gp].replicon_set.all()}
 
+        if not (rep_set1 or rep_set2):
+            continue
+
         for rep in rep_set1:
+            if rep not in rep_set2:
+                continue
             if not rep_set1[rep].rep_accnum == rep_set2[rep].rep_accnum:
                 # They're different!
                 context['changedgenomes'].append(gp2[gp].to_struct())
