@@ -139,7 +139,7 @@ def getfiles(request, gpid, version):
 
     context['status'] = "OK"
 
-    data = json.dumps(context)
+    data = json.dumps(context, indent=4, sort_keys=True)
     
     return HttpResponse(data, content_type="application/json")
 
@@ -153,7 +153,7 @@ def versions(request):
     context['versions'] = list(versions)
     context['status'] = "OK"
     
-    data = json.dumps(context)
+    data = json.dumps(context, indent=4, sort_keys=True)
     
     return HttpResponse(data, content_type="application/json")
     
@@ -166,7 +166,7 @@ def versionsnewest(request):
     context['versions'] = versions.version_id   
     context['status'] = "OK"
     
-    data = json.dumps(context)
+    data = json.dumps(context, indent=4, sort_keys=True)
     
     return HttpResponse(data, mimetype="application/json")
     
