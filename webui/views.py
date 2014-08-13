@@ -149,9 +149,8 @@ def fetchreps(request, gpid, version):
 def versions(request):
     context = {}
     
-    versions = Version.objects.all().values_list('version_id', flat=True)
+    context['versions'] = [v.to_struct() for v in Version.objects.all()]
     
-    context['versions'] = list(versions)
     context['status'] = "OK"
     
     data = json.dumps(context, indent=4, sort_keys=True)
@@ -162,9 +161,8 @@ def versionsnewest(request):
     
     context = {}
     
-    versions = Version.objects.order_by('-version_id')[0]
+    context['versions'] = Version.objects.order_by('-version_id')[0].to_struct()
     
-    context['versions'] = versions.version_id   
     context['status'] = "OK"
     
     data = json.dumps(context, indent=4, sort_keys=True)
