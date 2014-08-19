@@ -70,6 +70,12 @@ def fetchgenomeproject(request, gpid, version):
         gp = Genomeproject.objects.get(gp_id=gpid, version_id=version)
     except:
         return HttpResponse(status=400)
+
+    reptype = None
+    if request.GET.get('reptype'):
+        reptype = request.GET.get('reptype')
+        if not reptype in REP_TYPES:
+            return HttpResponse(status=400)
     
     context['genomeproject'] = gp.to_struct()
         
@@ -78,6 +84,9 @@ def fetchgenomeproject(request, gpid, version):
     context['replicons'] = []
     
     for r in replicons:
+        if reptype and (not reptype == r.rep_type):
+            continue
+
         context['replicons'].append(r.to_struct())
         
 
@@ -145,6 +154,27 @@ def fetchreps(request, gpid, version):
     return HttpResponse(data, content_type="application/json")
 
     
+
+def fetchgenes(request, rpvid, version):
+    context = {}
+    
+    try:
+        genes =  Replicon.objects.get(rpv_id=rpvid, version_id=version).gene_set.all()
+    except Exception as e:
+        #print str(e)
+        return HttpResponse(status=400)
+    
+    context['genes'] = []
+    
+    for g in genes:
+        context['genes'].append(g.to_struct())
+
+    context['status'] = "OK"
+
+    data = json.dumps(context, indent=4, sort_keys=True)
+    
+    return HttpResponse(data, content_type="application/json")
+        
 
 def versions(request):
     context = {}

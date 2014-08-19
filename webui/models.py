@@ -292,6 +292,15 @@ class Gene(models.Model):
     gene_name = models.TextField(blank=True)
     locus_tag = models.TextField(blank=True)
     gene_product = models.TextField(blank=True)
+
+    def to_struct(self, extra_objs = None):
+        r = {field.name: field.value_to_string(self) for field in self._meta.fields}
+        
+        if extra_objs:
+            r.update(extra_objs)   
+        
+        return r
+
     class Meta:
         managed = False
         db_table = 'gene'

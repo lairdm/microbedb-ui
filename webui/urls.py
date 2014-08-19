@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     url(r'^json/fetchgp/(?P<gpid>\d+)/$', views.fetchgenomeprojects, name="fetchgenomeprojectsjson"),
     url(r'^json/fetchgps/(?P<version>\d+)/$', views.fetchallgenomeprojects, name="fetchallgenomeprojectsjson"),
     url(r'^json/fetchreplicons/(?P<gpid>\d+)/(?P<version>\d+)/$', views.fetchreps, name="fetchrepsjson"),
+    url(r'^json/fetchgenes/(?P<rpvid>\d+)/(?P<version>\d+)/$', views.fetchgenes, name="fetchgenessjson"),
 
 )
